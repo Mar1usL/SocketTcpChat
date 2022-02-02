@@ -11,9 +11,9 @@ namespace SocketTcpServer
     {
         private readonly Server _server;
 
-        public string Id { get; set; }
-        public string Username { get; set; }
-        public Socket ClientSocket { get; set; }
+        public string Id { get; private set; }
+        public string Username { get; private set; }
+        public Socket ClientSocket { get; private set; }
 
         public Client(Socket socket, Server server)
         {
@@ -44,7 +44,6 @@ namespace SocketTcpServer
                     }
                     catch
                     {
-
                         message = String.Format("{0}: {1} has disconnected", DateTime.Now.ToShortTimeString(), Username);
                         Console.WriteLine(message);
                         _server.BroadcastMessage(message);
@@ -57,7 +56,8 @@ namespace SocketTcpServer
                 _server.RemoveConnection(this.Id);
                 Disconnect();
             }
-            
+
+
         }
 
         private string GetMessage()
@@ -66,19 +66,13 @@ namespace SocketTcpServer
             StringBuilder builder = new StringBuilder();
             int count = 0;
 
-            try
+            do
             {
-                do
-                {
-                    count = ClientSocket.Receive(data);
-                    builder.Append(Encoding.UTF8.GetString(data, 0, count));
-                }
-                while (ClientSocket.Available > 0);
+                count = ClientSocket.Receive(data);
+                builder.Append(Encoding.UTF8.GetString(data, 0, count));
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            while (ClientSocket.Available > 0);
+
 
             return builder.ToString();
         }

@@ -25,8 +25,6 @@ namespace SocketTcpServer
                 Console.WriteLine(ex.Message);
                 _server.Disconnect();
             }
-
-
         }
     }
 }

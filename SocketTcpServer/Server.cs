@@ -16,8 +16,8 @@ namespace SocketTcpServer
         private readonly int _port = 8005;
         private Socket _handler;
 
-        public Socket TcpSocket { get; set; }
-        public List<Client> Clients { get; set; }
+        public Socket Listener { get; private set; }
+        public List<Client> Clients { get; private set; }
 
         public Server()
         {
@@ -42,15 +42,18 @@ namespace SocketTcpServer
         {
             try
             {
-                TcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                TcpSocket.Bind(_endPoint);
-                TcpSocket.Listen(10);
+                Listener = new Socket(AddressFamily.InterNetwork, 
+                    SocketType.Stream, ProtocolType.Tcp);
+
+                Listener.Bind(_endPoint);
+                Listener.Listen(10);
+
                 Console.WriteLine($"Server has started on port {_port}");
 
                 while(true)
                 {
                     // Accepting incoming requests
-                    _handler = TcpSocket.Accept();
+                    _handler = Listener.Accept();
                     
                     Client client = new Client(_handler, this);
                     // Processing the client on a separtated thread
@@ -79,8 +82,8 @@ namespace SocketTcpServer
 
         public void Disconnect()
         {
-            TcpSocket.Shutdown(SocketShutdown.Both);
-            TcpSocket.Close();
+            Listener.Shutdown(SocketShutdown.Both);
+            Listener.Close();
 
             for (int i = 0; i < Clients.Count; i++)
             {

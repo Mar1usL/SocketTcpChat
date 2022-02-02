@@ -20,7 +20,9 @@ namespace SocketTcpClient
 
             try
             {
-                _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _clientSocket = new Socket(AddressFamily.InterNetwork, 
+                    SocketType.Stream, ProtocolType.Tcp);
+
                 _clientSocket.Connect(_address, _port);
 
                 string msg = username;
